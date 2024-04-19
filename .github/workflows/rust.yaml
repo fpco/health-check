@@ -2,8 +2,6 @@ name: Rust
 
 on:
   push:
-    tags:
-      - 'v*'
     branches: [main]
   pull_request:
   workflow_dispatch:
@@ -41,23 +39,13 @@ jobs:
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy, rustfmt
-          targets: x86_64-unknown-linux-musl
       - uses: Swatinem/rust-cache@v2
-      - name: Dependencies
+      - name: Musl Dependencies
         run: sudo apt install musl-tools -y
-      - name: Compile application
-        run: just cargo-compile
-      - name: Build binary
-        run: just cargo-build
+        if: runner.os == 'Linux'
+      - name: Build application
+        run: just-cargo-no-target
       - name: Lint
         run: |
           just cargo-clippy-check
           just cargo-fmt-check
-      - name: Artifacts
-        run: just release-artifacts
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: artifacts/*
-          generate_release_notes: true

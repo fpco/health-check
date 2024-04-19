@@ -20,21 +20,6 @@ fn readable_image_id(version: &str) -> &str {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::slack::readable_image_id;
-
-    #[test]
-    fn guess_readable_image_id_works() {
-        let image_id =
-            readable_image_id("ghcr.io/fpco/some-app:d5def5afc6030dda860a79f231b295e2e412bc28");
-        assert_eq!(image_id, "d5def5afc6030dda860a79f231b295e2e412bc28");
-
-        let image_id = readable_image_id("d5def5afc6030dda860a79f231b295e2e412bc28");
-        assert_eq!(image_id, "d5def5afc6030dda860a79f231b295e2e412bc28");
-    }
-}
-
 impl SlackApp {
     pub(crate) fn new(
         webhook: Url,
@@ -118,5 +103,20 @@ impl SlackApp {
                 response.status()
             ))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::slack::readable_image_id;
+
+    #[test]
+    fn guess_readable_image_id_works() {
+        let image_id =
+            readable_image_id("ghcr.io/fpco/some-app:d5def5afc6030dda860a79f231b295e2e412bc28");
+        assert_eq!(image_id, "d5def5afc6030dda860a79f231b295e2e412bc28");
+
+        let image_id = readable_image_id("d5def5afc6030dda860a79f231b295e2e412bc28");
+        assert_eq!(image_id, "d5def5afc6030dda860a79f231b295e2e412bc28");
     }
 }

@@ -2,17 +2,17 @@
 default:
 	just --list --unsorted
 
-# Compile application
-cargo-compile:
-	cargo test --release --no-run --locked --target x86_64-unknown-linux-musl
-
 # Build application
 cargo-build:
 	cargo build --release --locked --target x86_64-unknown-linux-musl
 
+# Build application (default target)
+cargo-build-no-target:
+	cargo build --release --locked
+
 # Clippy check
 cargo-clippy-check:
-	cargo clippy --target x86_64-unknown-linux-musl --release --no-deps --workspace --locked --tests -- -Dwarnings
+	cargo clippy --release --no-deps --workspace --locked --tests -- -Dwarnings
 
 # Cargo fmt check
 cargo-fmt-check:
@@ -21,7 +21,7 @@ cargo-fmt-check:
 # Create release artifacts
 release-artifacts:
 	mkdir -p artifacts
-	cp target/x86_64-unknown-linux-musl/release/health-check ./artifacts/
+	cp target/x86_64-unknown-linux-musl/release/health-check ./artifacts/health-check-x86_64-unknown-linux-musl
 
 # Test 1: Will raise alert to slack
 test1:

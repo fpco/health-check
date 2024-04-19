@@ -44,7 +44,7 @@ jobs:
         run: sudo apt install musl-tools -y
         if: runner.os == 'Linux'
       - name: Build application
-        run: just-cargo-no-target
+        run: just cargo-build-no-target
       - name: Lint
         run: |
           just cargo-clippy-check

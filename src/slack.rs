@@ -49,7 +49,11 @@ impl SlackApp {
         )
     }
 
-    pub(crate) fn send_notification(&self, message: &anyhow::Error) -> Result<()> {
+    pub(crate) fn send_notification(
+        &self,
+        message: &anyhow::Error,
+        latest_output: &str,
+    ) -> Result<()> {
         let description = self.compute_description();
         let mut value = serde_json::json!(
         {
@@ -69,7 +73,14 @@ impl SlackApp {
                         "type": "mrkdwn",
                         "text": description
                     },
-                }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": latest_output,
+                    }
+                },
             ]
         });
         if let Some(image_url) = &self.app_info.image_url {

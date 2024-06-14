@@ -75,12 +75,15 @@ impl SlackApp {
                     },
                 },
                 {
-                    "type": "section",
-                    "text": {
-                        "type": "plain_text",
-                        "text": latest_output,
-                    }
-                },
+                    "type": "divider"
+                }
+            ],
+            "attachments": [
+                {
+                    "mrkdwn_in": ["text"],
+                    "author_name": "Logs",
+                    "text": latest_output
+                }
             ]
         });
         if let Some(image_url) = &self.app_info.image_url {

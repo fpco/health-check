@@ -16,7 +16,9 @@ impl Cli {
     fn run(&self) {
         loop {
             if self.stdout_print {
-                println!("Printing to stdout");
+                for _ in 1..50 {
+                    println!("Printing to stdout");
+                }
             }
             eprintln!("Printing to stderr {}", self.output_timeout);
             std::thread::sleep(Duration::from_secs(self.output_timeout.into()));

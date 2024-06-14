@@ -50,7 +50,7 @@ pub(crate) struct Cli {
     #[arg(required = false)]
     pub(crate) args: Vec<String>,
     /// How many lines of output should we store for error messages?
-    #[arg(long, default_value_t = 10)]
+    #[arg(long, default_value_t = 50, env = "HEALTH_CHECK_OUTPUT_LINES")]
     pub(crate) output_lines: usize,
 }
 

@@ -18,7 +18,7 @@ use anyhow::{Context, Result};
 
 use clap::{arg, Parser};
 
-use crate::slack::SlackApp;
+use crate::{line_helper::LineHelper, slack::SlackApp};
 
 #[derive(Parser)]
 pub(crate) struct Cli {
@@ -217,6 +217,8 @@ fn process_std_handle(
     max_recent_output: usize,
 ) {
     let mut buffer = [0u8; 4096];
+    let mut line_helper = LineHelper::new();
+
     loop {
         match reader
             .read(&mut buffer)
@@ -243,13 +245,12 @@ fn process_std_handle(
                     break;
                 }
 
-                let mut guard = recent_output.lock();
-                for line in buffer.split(|x| *x == b'\n') {
+                for line in line_helper.append(&buffer[..size]) {
+                    let mut guard = recent_output.lock();
                     if guard.len() >= max_recent_output {
                         guard.pop_front();
                     }
-                    let line = line.strip_suffix(&[b'\r']).unwrap_or(line);
-                    guard.push_back(String::from_utf8_lossy(line).into_owned());
+                    guard.push_back(line);
                 }
             }
             Err(e) => {
@@ -257,6 +258,14 @@ fn process_std_handle(
                 break;
             }
         }
+    }
+
+    if let Some(line) = line_helper.finish() {
+        let mut guard = recent_output.lock();
+        if guard.len() >= max_recent_output {
+            guard.pop_front();
+        }
+        guard.push_back(line);
     }
 }
 

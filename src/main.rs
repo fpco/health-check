@@ -4,6 +4,7 @@ use clap::Parser;
 use pid1::Pid1Settings;
 
 mod cli;
+mod line_helper;
 mod slack;
 
 fn main() -> Result<()> {

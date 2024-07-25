@@ -54,13 +54,6 @@ pub(crate) struct Cli {
     pub(crate) output_lines: usize,
 }
 
-#[derive(clap::Args)]
-#[group(required = true, multiple = false)]
-pub(crate) struct NotifyHook {
-    #[arg(long, value_parser(Url::from_str), env = "HEALTH_CHECK_SLACK_WEBHOOK")]
-    pub(crate) slack_webhook: Url,
-}
-
 #[derive(Debug)]
 enum MainMessage {
     Error(anyhow::Error),

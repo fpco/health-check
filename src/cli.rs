@@ -25,9 +25,9 @@ pub(crate) struct Cli {
     /// Seconds to wait for output before killing the task
     #[arg(long)]
     pub(crate) task_output_timeout: Option<u64>,
-    /// Notification hook
-    #[command(flatten)]
-    pub(crate) notification_hook: NotifyHook,
+    /// Slack Webhook for notification
+    #[arg(long, value_parser(Url::from_str), env = "HEALTH_CHECK_SLACK_WEBHOOK")]
+    pub(crate) slack_webhook: Url,
     /// Application description
     #[arg(long)]
     pub(crate) app_description: String,
@@ -192,7 +192,7 @@ impl Cli {
             Ok(()) => Ok(()),
             Err(e) => {
                 let slack_app = SlackApp::new(
-                    self.notification_hook.slack_webhook,
+                    self.slack_webhook,
                     self.notification_context,
                     self.app_description,
                     self.app_version,

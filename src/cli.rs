@@ -25,9 +25,9 @@ pub(crate) struct Cli {
     /// Seconds to wait for output before killing the task
     #[arg(long)]
     pub(crate) task_output_timeout: Option<u64>,
-    /// Slack Webhook for notification
-    #[arg(long, value_parser(Url::from_str), env = "HEALTH_CHECK_SLACK_WEBHOOK")]
-    pub(crate) slack_webhook: Option<Url>,
+    /// Notification hook
+    #[command(flatten)]
+    pub(crate) notification_hook: NotifyHook,
     /// Application description
     #[arg(long)]
     pub(crate) app_description: String,
@@ -52,6 +52,13 @@ pub(crate) struct Cli {
     /// How many lines of output should we store for error messages?
     #[arg(long, default_value_t = 50, env = "HEALTH_CHECK_OUTPUT_LINES")]
     pub(crate) output_lines: usize,
+}
+
+#[derive(clap::Args)]
+#[group(required = true, multiple = false)]
+pub(crate) struct NotifyHook {
+    #[arg(long, value_parser(Url::from_str), env = "HEALTH_CHECK_SLACK_WEBHOOK")]
+    pub(crate) slack_webhook: Option<Url>,
 }
 
 #[derive(Debug)]
@@ -184,7 +191,7 @@ impl Cli {
         match res {
             Ok(()) => Ok(()),
             Err(e) => {
-                if let Some(slack_webhook) = self.slack_webhook {
+                if let Some(slack_webhook) = self.notification_hook.slack_webhook {
                     let slack_app = SlackApp::new(
                         slack_webhook,
                         self.notification_context,

@@ -27,7 +27,7 @@ pub(crate) struct Cli {
     pub(crate) task_output_timeout: Option<u64>,
     /// Slack Webhook for notification
     #[arg(long, value_parser(Url::from_str), env = "HEALTH_CHECK_SLACK_WEBHOOK")]
-    pub(crate) slack_webhook: Option<Url>,
+    pub(crate) slack_webhook: Url,
     /// Application description
     #[arg(long)]
     pub(crate) app_description: String,
@@ -184,23 +184,21 @@ impl Cli {
         match res {
             Ok(()) => Ok(()),
             Err(e) => {
-                if let Some(slack_webhook) = self.slack_webhook {
-                    let slack_app = SlackApp::new(
-                        slack_webhook,
-                        self.notification_context,
-                        self.app_description,
-                        self.app_version,
-                        self.image_url,
-                    );
-                    let mut msg = String::new();
-                    for line in &*recent_output.lock() {
-                        msg.push_str(line);
-                        msg.push('\n');
-                    }
-                    let result = slack_app.send_notification(&e, &msg);
-                    if let Err(err) = result {
-                        eprintln!("Slack notification failed: {err:?}");
-                    }
+                let slack_app = SlackApp::new(
+                    self.slack_webhook,
+                    self.notification_context,
+                    self.app_description,
+                    self.app_version,
+                    self.image_url,
+                );
+                let mut msg = String::new();
+                for line in &*recent_output.lock() {
+                    msg.push_str(line);
+                    msg.push('\n');
+                }
+                let result = slack_app.send_notification(&e, &msg);
+                if let Err(err) = result {
+                    eprintln!("Slack notification failed: {err:?}");
                 }
                 Err(e)
             }

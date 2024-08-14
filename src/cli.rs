@@ -141,16 +141,17 @@ impl Cli {
             });
         }
 
-        let send_clone = send.clone();
         let child_pid = i32::try_from(child.id())?;
-        let child_was_killed = Arc::new(AtomicBool::from(false));
-        let child_was_killed_clone = child_was_killed.clone();
-        std::thread::spawn(move || {
-            handle_signals(
-                send_clone,
-                nix::unistd::Pid::from_raw(child_pid),
-                child_was_killed_clone,
-            )
+        static CHILD_WAS_KILLED: AtomicBool = AtomicBool::new(false);
+        std::thread::spawn({
+            let send = send.clone();
+            move || {
+                handle_signals(
+                    send,
+                    nix::unistd::Pid::from_raw(child_pid),
+                    &CHILD_WAS_KILLED,
+                )
+            }
         });
 
         std::thread::spawn(|| watch_child(send, child));
@@ -167,7 +168,7 @@ impl Cli {
                 )),
                 MainMessage::ChildExited(exit_status) => {
                     if self.can_exit && exit_status.success()
-                        || child_was_killed.load(Ordering::SeqCst)
+                        || CHILD_WAS_KILLED.load(Ordering::SeqCst)
                     {
                         eprintln!("Child exited, treating as a success case");
                         Ok(())
@@ -309,7 +310,7 @@ fn watch_child(send: SendMainMessage, mut child: Child) {
 fn handle_signals(
     send: SendMainMessage,
     child_pid: nix::unistd::Pid,
-    child_was_killed: Arc<AtomicBool>,
+    child_was_killed: &AtomicBool,
 ) {
     let mut signals = match signal_hook::iterator::Signals::new([SIGTERM, SIGINT])
         .context("Creating new Signals value")

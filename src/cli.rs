@@ -166,8 +166,14 @@ impl Cli {
                     "Potential deadlock detected, too long without output from child process"
                 )),
                 MainMessage::ChildExited(exit_status) => {
+                    // Memory ordering comment: We use relaxed since
+                    // there is only one atomic variable and we are
+                    // not trying to establish any cross thread
+                    // happens before relationship. Total modification
+                    // order is guaranteed in the individual atomic
+                    // variable.
                     if self.can_exit && exit_status.success()
-                        || child_was_killed.load(Ordering::SeqCst)
+                        || child_was_killed.load(Ordering::Relaxed)
                     {
                         eprintln!("Child exited, treating as a success case");
                         Ok(())
@@ -326,7 +332,13 @@ fn handle_signals(
             .with_context(|| format!("Unable to convert signal value for nix: {signal}"))
         {
             Ok(signal) => {
-                child_was_killed.store(true, Ordering::SeqCst);
+                // Memory ordering comment: We use relaxed since there
+                // is only one atomic variable and we are not trying
+                // to establish any cross thread happens before
+                // relationship. Total modification
+                // order is guaranteed in the individual atomic
+                // variable.
+                child_was_killed.store(true, Ordering::Relaxed);
                 if let Err(e) = nix::sys::signal::kill(child_pid, signal)
                     .context("Unable to send signal to child process")
                 {

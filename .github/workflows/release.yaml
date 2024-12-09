@@ -22,7 +22,6 @@ jobs:
       matrix:
         os:
         - ubuntu-latest
-
         toolchain:
         - 1.77.2
 
@@ -37,11 +36,10 @@ jobs:
     - uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.toolchain }}
+        targets: x86_64-unknown-linux-musl,aarch64-unknown-linux-musl
     - name: Install musl tools
-      run: |
-        sudo apt-get install -y musl-tools
-        rustup target add x86_64-unknown-linux-musl
-    - name: Build Musl binary
+      run: sudo apt-get install -y musl-tools
+    - name: Build binary (x86 and ARM64)
       run: just cargo-build
     - name: Generate artifacts
       run: just release-artifacts

@@ -5,7 +5,10 @@ default:
 # Build application
 cargo-build:
 	cargo build --release --locked --target x86_64-unknown-linux-musl
-	cargo build --release --locked --target aarch64-unknown-linux-musl
+
+# Build binaries
+build-binaries: cargo-build
+	cross build --target aarch64-unknown-linux-musl --release
 
 # Clippy check
 cargo-clippy-check:

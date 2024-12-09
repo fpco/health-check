@@ -22,25 +22,24 @@ jobs:
       matrix:
         os:
         - ubuntu-latest
-        toolchain:
-        - 1.77.2
 
     steps:
     - uses: actions/checkout@v2
-    - uses: extractions/setup-just@v1
+    - uses: taiki-e/install-action@v2
       with:
-        just-version: 1.25.2
+        tool: just@1.25.2,cross@v0.2.5
     - uses: Swatinem/rust-cache@v2
       with:
         key: ${{ runner.os }}-${{ hashFiles('Cargo.lock') }}-${{ matrix.toolchain }}
     - uses: dtolnay/rust-toolchain@master
       with:
-        toolchain: ${{ matrix.toolchain }}
+        toolchain: 1.77.2
         targets: x86_64-unknown-linux-musl,aarch64-unknown-linux-musl
     - name: Install musl tools
-      run: sudo apt-get install -y musl-tools
+      run: |
+        sudo apt-get install -y musl-tools
     - name: Build binary (x86 and ARM64)
-      run: just cargo-build
+      run: just build-binaries
     - name: Generate artifacts
       run: just release-artifacts
     - uses: actions/upload-artifact@v3

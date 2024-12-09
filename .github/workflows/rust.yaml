@@ -22,12 +22,12 @@ jobs:
       matrix:
         os:
         - ubuntu-latest
-        # - macos-latest
+        - macos-latest
 
         toolchain:
         - 1.77.2
-        # - stable
-        # - nightly
+        - stable
+        - nightly
 
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy, rustfmt
-          targets: x86_64-unknown-linux-musl,aarch64-unknown-linux-musl
+          targets: x86_64-unknown-linux-musl
       - uses: Swatinem/rust-cache@v2
       - name: Musl Dependencies
         run: sudo apt install musl-tools -y

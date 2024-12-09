@@ -4,11 +4,12 @@ default:
 
 # Build application
 cargo-build:
-	cargo build --release --locked --target x86_64-unknown-linux-musl
-
-# Build application (default target)
-cargo-build-no-target:
 	cargo build --release --locked
+
+# Build binaries
+build-binaries:
+	cargo build --release --locked --target x86_64-unknown-linux-musl
+	cross build --target aarch64-unknown-linux-musl --release
 
 # Clippy check
 cargo-clippy-check:
@@ -22,6 +23,7 @@ cargo-fmt-check:
 release-artifacts:
 	mkdir -p artifacts
 	cp target/x86_64-unknown-linux-musl/release/health-check ./artifacts/health-check-x86_64-unknown-linux-musl
+	cp target/aarch64-unknown-linux-musl/release/health-check ./artifacts/health-check-aarch64-unknown-linux-musl
 
 # Test 1: Will raise alert to slack
 test1:

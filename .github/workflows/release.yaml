@@ -27,7 +27,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: taiki-e/install-action@v2
       with:
-        tool: just@1.40.0
+        tool: just@1.40.0,cross@0.2.5
     - uses: Swatinem/rust-cache@v2
       with:
         key: ${{ runner.os }}-${{ hashFiles('Cargo.lock') }}-${{ matrix.toolchain }}

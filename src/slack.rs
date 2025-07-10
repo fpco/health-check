@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use reqwest::Url;
 
 pub(crate) struct SlackApp {
@@ -14,7 +14,7 @@ pub(crate) struct AppDetail {
 }
 
 fn readable_image_id(version: &str) -> &str {
-    match version.split(':').last() {
+    match version.split(':').next_back() {
         Some(last) => last,
         None => version,
     }

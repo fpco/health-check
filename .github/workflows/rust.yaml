@@ -49,3 +49,4 @@ jobs:
         run: |
           just cargo-clippy-check
           just cargo-fmt-check
+        if: matrix.toolchain == '1.88.0'

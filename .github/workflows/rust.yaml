@@ -25,15 +25,15 @@ jobs:
         - macos-latest
 
         toolchain:
-        - 1.77.2
+        - 1.88.0
         - stable
         - nightly
 
     steps:
       - uses: actions/checkout@v4
-      - uses: extractions/setup-just@v1
+      - uses: taiki-e/install-action@v2
         with:
-          just-version: 1.25.2
+          tool: just@1.40.0
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}

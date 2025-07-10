@@ -8,15 +8,16 @@ use std::{
     process::{Child, Command, ExitStatus, Stdio},
     str::FromStr,
     sync::{
+        Arc,
         atomic::{AtomicBool, Ordering},
-        mpsc, Arc,
+        mpsc,
     },
     time::{Duration, Instant},
 };
 
 use anyhow::{Context, Result};
 
-use clap::{arg, Parser};
+use clap::{Parser, arg};
 
 use crate::{line_helper::LineHelper, slack::SlackApp};
 

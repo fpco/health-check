@@ -27,7 +27,7 @@ release-artifacts:
 
 # Test 1: Will raise alert to slack
 test1:
-	cargo run --bin health-check -- --app-description "Indexer Raw Processor (k8s Testnet Mainnet)" --task-output-timeout 5 sleep-check -- --stdout-print --output-timeout 10
+	cargo run --bin health-check -- sleep-check -- --stdout-print --output-timeout 10
 
 # Test 2: Will quit.
 test2:

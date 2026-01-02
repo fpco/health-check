@@ -25,7 +25,7 @@ jobs:
         - macos-latest
 
         toolchain:
-        - 1.88.0
+        - 1.90.0
         - stable
         - nightly
 
@@ -49,4 +49,4 @@ jobs:
         run: |
           just cargo-clippy-check
           just cargo-fmt-check
-        if: matrix.toolchain == '1.88.0'
+        if: matrix.toolchain == '1.90.0'

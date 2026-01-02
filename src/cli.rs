@@ -24,13 +24,13 @@ use crate::{line_helper::LineHelper, slack::SlackApp};
 #[derive(Parser)]
 pub(crate) struct Cli {
     /// Seconds to wait for output before killing the task
-    #[arg(long)]
+    #[arg(long, env = "HEALTH_CHECK_TASK_TIMEOUT")]
     pub(crate) task_output_timeout: Option<u64>,
     /// Slack Webhook for notification
     #[arg(long, value_parser(Url::from_str), env = "HEALTH_CHECK_SLACK_WEBHOOK")]
     pub(crate) slack_webhook: Url,
     /// Application description
-    #[arg(long)]
+    #[arg(long, env = "HEALTH_CHECK_APP_DESCRIPTION")]
     pub(crate) app_description: String,
     /// Application version
     #[arg(long, env = "HEALTH_CHECK_APP_VERSION")]
